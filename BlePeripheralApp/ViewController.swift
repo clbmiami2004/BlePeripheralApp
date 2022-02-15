@@ -22,6 +22,8 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         super.viewDidLoad()
         
         peripheralManager = CBPeripheralManager(delegate: self, queue: nil)
+        
+        startAdvertising()
     }
     
     ///Delegates for BLE states: BLE On/Off, or any other states
@@ -65,13 +67,14 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         
         //5.- Start advertising
         startAdvertising()
+        print("This is my UUID: \(String(describing: service))")
     }
     
     func startAdvertising() {
         messageLabel.text = "Advertising Data"
         
         peripheralManager.startAdvertising([CBAdvertisementDataLocalNameKey: "BlePeripheralApp", CBAdvertisementDataServiceUUIDsKey: [service]])
-        print("Start Advertising")
+        print("Started Advertising")
     }
     
     ///PeripheralManager has delegate methods to respond to read, write and notify. Whenever a value is written to device the didReceiveWrite() method get called.
@@ -80,6 +83,11 @@ class ViewController: UIViewController, CBPeripheralManagerDelegate {
         if let value = requests.first?.value {
             writeValueLabel.text = value.hexEncodedString()
         }
+    }
+    
+    func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
+        messageLabel.text = "Data getting Read"
+        readValueLabel.text = value
     }
 
 
